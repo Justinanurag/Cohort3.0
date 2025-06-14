@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1 onclick="fetch()">Adding Element</h1>
+    <div id="toParent">
+    <h4 id="todo1" >Sleep <button onclick="rem(this)">delete</button></h4>
+    <h4 id="todo2">Eat <button onclick="rem(this)">delete</button></h4>
+    </div>
+   
+    <h1 id="todo"></h1 >
+    <div>
+    <input type="text" name="" id="input">
+    <button onclick="add()">Add</button>
+     </div>
+   
+     <button onclick="del()">Remove</button>
+     <p id="el"> Hello boi</p>
+
+<script>
+    //Adding Element 
+    function add(){
+        const inputElement=document.getElementById("input");
+        const textNode=document.createElement("div");//in div all added so there i have take div
+        textNode.innerHTML=inputElement.value; 
+        document.body.appendChild(textNode); 
+    }
+    //Remove Element
+    function del(){
+        const element=document.getElementById("el");
+        element.remove(); 
+    }
+    //fetching the First Element
+    function fetch(){
+        //const read=document.getElementById("todo1").innerHTML="Ankit";
+        //Fetching First element
+        //const read = document.querySelectorAll('h4')[0].innerHTML = "Anki";
+        //Fetching second element
+        const read = document.querySelectorAll('h4')[1].innerHTML = "Anki";
+    } 
+
+    //Deleting elements
+    function rem(button){
+        //Deleteing first element
+        // const todo=document.querySelectorAll("h4")[0];
+        //deleteing 2nd element 
+        //const todo=document.querySelectorAll("h4")[1];
+        // const todo= document.getElementById("todo1");
+        // const todo2= document.getElementById("todo2");
+        // todo.remove();
+        // todo2.remove();
+        //This is proper method
+                const h4=button.parentElement;//More accurate method
+                h4.remove();
+    }
+</script>
+</body>
+</html>

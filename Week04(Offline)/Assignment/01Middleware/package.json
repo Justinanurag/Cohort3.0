@@ -1,0 +1,15 @@
+{
+  "name": "01middleware",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "justinanurag0.2",
+  "type": "commonjs",
+  "main": "01requestCount.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}

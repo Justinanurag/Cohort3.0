@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To Do</title>
+  </head>
+  <body>
+    <h1>To Do App</h1>
+    <div>
+      <input type="text" id="input" placeholder="Enter Your Work here.." />
+      <button onclick="add()">Add To do</button>
+    </div>
+    <script>
+        let counter=1;
+      //Adding Element here
+      function add() {
+        const inputElement = document.getElementById("input");
+        const newDiv = document.createElement("div");
+          newDiv.innerHTML = `<div>${counter}.${inputElement.value}</div> <button onclick="del(this)">delete</button>`;//This should be review
+        document.body.appendChild(newDiv);
+        inputElement.value = ""; // clear input after adding
+         counter++;
+      }
+//Adding Delete Function
+      function del(button){
+        const element=button.parentElement;
+        element.remove();
+      }       
+    </script>
+  </body>
+</html>

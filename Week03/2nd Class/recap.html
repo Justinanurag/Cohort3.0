@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>TO DO</h1>
+    <div>
+    <input type="text" id="input" placeholder="Enter Task">
+    <button onclick="add()">Add Task</button>
+    </div>
+    <script>
+        //Adding Function
+        // function add(){
+        //     const inputElement=document.getElementById("input");
+        //     const newDiv=document.createElement("div");
+        //     newDiv.innerHTML=inputElement.value;
+        //     document.body.appendChild(newDiv);
+        //     inputElement.value="";
+        // }
+
+        function add(){
+            const value=document.querySelector("input").value;
+            const spanEl=document.createElement("span");
+            const buttonEl=document.createElement("button");
+            spanEl.innerHTML=value;
+            buttonEl.innerHTML="Delete"
+
+            const divEl=document.createElement("div");
+            divEl.appendChild(spanEl);
+            divEl.appendChild(buttonEl);
+
+            document.querySelector("body").appendChild(divEl);
+            value.value="";
+        }
+    </script>
+</body>
+</html>
