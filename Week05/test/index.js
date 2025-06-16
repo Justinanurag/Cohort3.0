@@ -13,7 +13,7 @@ app.post('/sum',(req,res)=>{
     const b=parseInt(req.body.b);
     const result=a+b;
     res.send({sum: result});
-     console.log(`Received numbers: ${a} + ${b}. Sent sum: ${result}`);
+     console.log(`The value of: ${a} + ${b}. Sent sum: ${result}`);
 });
 app.listen(3000,()=>{
     console.log('Server is running on port 3000');
