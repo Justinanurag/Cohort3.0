@@ -13,8 +13,8 @@ connectDB();
 app.get('/',function(req,res){
     res.send("Test Server");
 })
-// app.use('/api/auth',require("./routes/auth"));
-// app.use('/api/tasks',require("./routes/tasks"));
+app.use('/api/auth',require("./routes/auth"));
+//app.use('/api/tasks',require("./routes/tasks"));
 
 const PORT=process.env.PORT || 5000;
 
