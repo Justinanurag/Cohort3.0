@@ -84,5 +84,5 @@ app.get("/me",function(req,res){
 
 /* ---------------- Server Start ---------------- */
 app.listen(3000, function () {
-    console.log(`🚀 Server is running on port`);
+    console.log(`🚀 Server is running on port 3000`);
 });
