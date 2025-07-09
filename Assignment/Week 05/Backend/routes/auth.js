@@ -1,7 +1,9 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const User = require('../modals/User'); 
+import express from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import User from '../modals/User';
+
+
 const router = express.Router();
 
 // Register
