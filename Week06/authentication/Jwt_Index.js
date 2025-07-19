@@ -39,7 +39,8 @@ app.post('/signin',(req,res)=>{
     //check if user exists
     const foundUser=users.find(u=>u.username===username && u.password===password);
     const token=jwt.sign({
-        username:username
+        username:username,
+       // password:password// if we do this then password can be decoded (leaked)
     },JWT_SECRET); // convert their username over to a jwt
 
     if(!foundUser){
@@ -48,7 +49,7 @@ app.post('/signin',(req,res)=>{
         });
         return;
     }
-    //send sucess response with token 
+    //send success response with token 
     res.json({
         message:"✅ Sign-in successful",
         token:token
