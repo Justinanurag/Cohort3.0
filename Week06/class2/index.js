@@ -1,13 +1,21 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+const { message } = require("statuses");
 const JWT_SECRET = "randomAnuragtiwari";
 const app = express();
 app.use(express.json());
 const PORT=3000;
 const users = [];
 
+/*----------Logger----------- */
+function logger(req,res,next){
+  console.log(req.method + "Request came");
+  next();
+}
+
+
 //Signup route
-app.post("/signup", (req, res) => {
+app.post("/signup",logger, (req, res) => {
   const { username, password } = req.body;
   //Basic validation
   if (!username || username.length < 4 || !password || password.length < 6) {
@@ -37,7 +45,7 @@ app.post("/signup", (req, res) => {
 });
 
 /*-----------------------signin route-----------*/
-app.post('/signin',(req,res)=>{
+app.post('/signin',logger,(req,res)=>{
     const {username,password}=req.body;
     //check if user exists
     const foundUser=users.find(u=>u.username===username && u.password===password);
@@ -57,7 +65,9 @@ app.post('/signin',(req,res)=>{
     });
     console.log(users)
 });
-app.get("/me", (req, res) => {
+
+/*---------------------- Adding middleware---------- -----------*/
+function auth(req, res, next) {
     const authHeader = req.headers.authorization;
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -67,24 +77,40 @@ app.get("/me", (req, res) => {
 
     try {
         const decodedInformation = jwt.verify(token, JWT_SECRET);
-        const username = decodedInformation.username;
-
-        const foundUser = users.find(user => user.username === username);
-
-        if (foundUser) {
-            res.json({
-                username: foundUser.username,
-                password: foundUser.password, // ⚠️ Exposing password is not recommended
-                message: "✅ Login successfully in user route"
-            });
-        } else {
-            res.status(403).json({ message: "😥 User not found" });
-        }
+        req.username = decodedInformation.username;
+        next();
     } catch (err) {
-        res.status(403).json({ message: "❌ Invalid or expired token" });
+        return res.status(403).json({ message: "❌ Invalid or expired token" });
+    }
+}
+
+
+app.get("/me",logger, auth, (req, res) => {
+    const foundUser = users.find(user => user.username === req.username);
+
+    if (foundUser) {
+        res.json({
+            username: foundUser.username,
+            // ⚠️ Don't expose password in production
+            message: "✅ Login successful in user route"
+        });
+    } else {
+        res.status(403).json({ message: "😥 User not found" });
     }
 });
 
+
+// app.get("/todo",(req,res)=>{
+//   const token=req.headers.token;
+//   const decodedInformation=jwt.verify(token,JWT_SECRET);
+//   if(decodedInformation.username){
+
+//   } else{
+//     res.json({
+//       message:"You are not logged in!"
+//     })
+//   }
+// })
 
 
 /*---------------Server Started -----------------*/
