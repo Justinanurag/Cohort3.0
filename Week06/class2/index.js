@@ -1,119 +1,105 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
-const { message } = require("statuses");
-const JWT_SECRET = "randomAnuragtiwari";
+const path = require("path");
 const app = express();
-app.use(express.json());
-const PORT=3000;
+const PORT = 3000;
+const JWT_SECRET = "randomAnuragtiwari";
 const users = [];
 
-/*----------Logger----------- */
-function logger(req,res,next){
-  console.log(req.method + "Request came");
+app.use(express.json());
+
+/*---------- Logger Middleware -----------*/
+function logger(req, res, next) {
+  console.log(req.method + " request came to " + req.url);
   next();
 }
 
+/*---------- Serve Frontend ----------*/
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
-//Signup route
-app.post("/signup",logger, (req, res) => {
+/*---------- Signup Route ----------*/
+app.post("/signup", logger, (req, res) => {
   const { username, password } = req.body;
-  //Basic validation
+
+  // Basic validation
   if (!username || username.length < 4 || !password || password.length < 6) {
-    res.json({
-      message:
-        "Username must be at least 3 char and password at least 6 character",
+    return res.status(400).json({
+      message: "Username must be at least 4 characters and password at least 6 characters"
     });
-    return;
   }
 
-  //check if username already exist
-  const userExist = users.find((u) => u.username === username);
-  if (userExist) {
-    res.json({
-      message: "Username is already exist",
+  // Check if user exists
+  const userExists = users.find(u => u.username === username);
+  if (userExists) {
+    return res.status(409).json({
+      message: "Username already exists"
     });
-    return;
   }
-  //Save new user
-  users.push({
-    username,
-    password,
+
+  // Save user
+  users.push({ username, password });
+
+  res.status(201).json({
+    message: "Signup successfully!"
   });
+});
+
+/*---------- Signin Route ----------*/
+app.post('/signin', logger, (req, res) => {
+  const { username, password } = req.body;
+
+  const foundUser = users.find(u => u.username === username && u.password === password);
+
+  if (!foundUser) {
+    return res.status(401).json({
+      message: "Invalid username or password"
+    });
+  }
+
+  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "10s" });
+
   res.json({
-    message: "Signup Sucessfully!",
+    message: "Signin successful",
+    token
   });
 });
 
-/*-----------------------signin route-----------*/
-app.post('/signin',logger,(req,res)=>{
-    const {username,password}=req.body;
-    //check if user exists
-    const foundUser=users.find(u=>u.username===username && u.password===password);
-    const token=jwt.sign({
-        username:username,
-    },JWT_SECRET);
-    if(!foundUser){
-        res.json({
-            message:"Invalid username or password"
-        });
-        return;
-    }
-    //Send success response with token
-    res.json({
-        message:"Sign-in successfull",
-        token:token
-    });
-    console.log(users)
-});
-
-/*---------------------- Adding middleware---------- -----------*/
+/*---------- Auth Middleware ----------*/
 function auth(req, res, next) {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
+  const authHeader = req.headers.authorization;
 
-    if (!token) {
-        return res.status(401).json({ message: "❌ Token missing" });
-    }
+  const token = authHeader && authHeader.split(" ")[1];
+  if (!token) {
+    return res.status(401).json({ message: "❌ Token missing" });
+  }
 
-    try {
-        const decodedInformation = jwt.verify(token, JWT_SECRET);
-        req.username = decodedInformation.username;
-        next();
-    } catch (err) {
-        return res.status(403).json({ message: "❌ Invalid or expired token" });
-    }
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.username = decoded.username;
+    next();
+  } catch (err) {
+    return res.status(403).json({ message: "❌ Invalid or expired token" });
+  }
 }
 
+/*---------- Protected Route (/me) ----------*/
+app.get("/me", logger, auth, (req, res) => {
+  const foundUser = users.find(user => user.username === req.username);
 
-app.get("/me",logger, auth, (req, res) => {
-    const foundUser = users.find(user => user.username === req.username);
-
-    if (foundUser) {
-        res.json({
-            username: foundUser.username,
-            // ⚠️ Don't expose password in production
-            message: "✅ Login successful in user route"
-        });
-    } else {
-        res.status(403).json({ message: "😥 User not found" });
-    }
+  if (foundUser) {
+    return res.json({
+      username: foundUser.username,
+      // Avoid sending password
+      message: "✅ Login successful in user route"
+    });
+  } else {
+    return res.status(404).json({ message: "😥 User not found" });
+  }
 });
 
-
-// app.get("/todo",(req,res)=>{
-//   const token=req.headers.token;
-//   const decodedInformation=jwt.verify(token,JWT_SECRET);
-//   if(decodedInformation.username){
-
-//   } else{
-//     res.json({
-//       message:"You are not logged in!"
-//     })
-//   }
-// })
-
-
-/*---------------Server Started -----------------*/
-app.listen(3000,function(){
-    console.log(`Server is running on post ${PORT}`);
-})
+/*---------- Start Server ----------*/
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
