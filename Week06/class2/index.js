@@ -58,12 +58,12 @@ app.post('/signin', logger, (req, res) => {
     });
   }
 
-  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "10s" });
+  const token = jwt.sign({ username }, JWT_SECRET, { expiresIn: "1h" });
 
   res.json({
     message: "Signin successful",
     token
-  });
+  }); 
 });
 
 /*---------- Auth Middleware ----------*/
