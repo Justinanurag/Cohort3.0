@@ -1,126 +1,55 @@
-import React from "react";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Link,
-  useNavigate,
-  Outlet,
-} from "react-router-dom";
+// import React, { useRef } from 'react'
 
+// const App = () => {
+//   //For replace this in react we use useRef
+//   const inputref=useRef();
+  
+//   function focusOnInput(){
+//     //document.getElementById("name").focus();
+//     inputref.current.focus();
+//   }
+//   return (
+//     <div>
+//       Sign Up
+//       {/* here i use ref */}
+//       <input type="name" name="" id="name" ref={inputref} />
+//       <input type="name" name="" id='' ref={inputref} />
+//       <button onClick={focusOnInput}>submit</button>
+//     </div>
+//   )
+// }
+
+// export default App
+
+
+//Building a clock with start and stop functionality
+
+import React, { useRef, useState } from 'react'
 const App = () => {
-  // ✅ Route configuration array
-  // Instead of hardcoding <Route> multiple times, we store them here
-  const routes = [
-    {
-      path: "neet/online-coaching-class-10",
-      element: <Class10Program />,
-    },
-    {
-      path: "neet/online-coaching-class-11",
-      element: <Class11Program />,
-    },
-    {
-      path: "neet/online-coaching-class-12",
-      element: <Class12Program />,
-    },
-    {
-      path: "*", // ✅ catch-all for invalid URLs inside "/"
-      element: <Error />,
-    },
-    {
-      index: true, // ✅ Default route for "/"
-      element: <Home />,
-    },
-  ];
-
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* ✅ Layout is the parent route */}
-        {/* All child routes will render inside <Outlet /> */}
-        <Route path="/" element={<Layout />}>
-          {/* ✅ map over the routes array to generate child routes */}
-          {routes.map((route, index) => (
-            <Route
-              key={index}
-              path={route.path} // child path (relative to parent "/")
-              index={route.index} // only one route can be index
-              element={route.element} // component to render
-            />
-          ))}
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-};
-
-// ✅ Layout component: always renders Header + Footer
-// Outlet is where child routes will be displayed
-function Layout() {
-  return (
-    <div>
-      <Header />
-      <Outlet /> {/* placeholder for nested routes */}
-      <div>Footer || Contact Us</div>
-    </div>
-  );
-}
-
-// ---------------- Page Components ----------------
-function Class10Program() {
-  return <div>Neet programs for class 10th</div>;
-}
-
-function Class11Program() {
-  return <div>Neet programs for class 11th</div>;
-}
-
-function Class12Program() {
-  const navigate = useNavigate(); // ✅ useNavigate hook for programmatic navigation
-
-  function redirectUser() {
-    navigate("/"); // redirect user back to home
+  const [currentCount,setCurrentCount]=useState(0);
+ //const [timer,setTimer]=useState(0);
+ //Above is not good method due to rerendering
+ //So we useRef came into the picture
+ const timer=useRef();
+  function startClock(){
+    let value=setInterval(function(){
+      setCurrentCount(c=>c+1);
+    },1000);
+    // setTimer(value);
+    timer.current=value;
   }
 
-  return (
-    <div>
-      Neet programs for class 12th
-      <button onClick={redirectUser}>Go back to landing page</button>
-    </div>
-  );
-}
-
-function Home() {
-  return <div>Welcome! This is the home page of Willen!</div>;
-}
-
-function Error() {
-  const navigate = useNavigate();
-
-  function redirectToHome() {
-    navigate("/"); // redirect invalid page → home
+  function stopClock(){
+    clearInterval(timer.current)
   }
-
   return (
     <div>
-      <h2>Page Not Found</h2>
-      <button onClick={redirectToHome}>Go back to home page</button>
+      {currentCount}
+      <button onClick={startClock}>Start</button>
+      <button onClick={stopClock}>Stop</button>
+      
     </div>
-  );
+  )
 }
 
-// ✅ Header with navigation links
-// Use <Link> instead of <a> → prevents page reload
-function Header() {
-  return (
-    <div>
-      <Link to="/">Allen</Link> |{" "}
-      <Link to="/neet/online-coaching-class-10">Class 10</Link> |{" "}
-      <Link to="/neet/online-coaching-class-11">Class 11</Link> |{" "}
-      <Link to="/neet/online-coaching-class-12">Class 12</Link>
-    </div>
-  );
-}
-
-export default App;
+export default App
