@@ -9,45 +9,65 @@ import {
 } from "react-router-dom";
 
 const App = () => {
+  // ✅ Route configuration array
+  // Instead of hardcoding <Route> multiple times, we store them here
+  const routes = [
+    {
+      path: "neet/online-coaching-class-10",
+      element: <Class10Program />,
+    },
+    {
+      path: "neet/online-coaching-class-11",
+      element: <Class11Program />,
+    },
+    {
+      path: "neet/online-coaching-class-12",
+      element: <Class12Program />,
+    },
+    {
+      path: "*", // ✅ catch-all for invalid URLs inside "/"
+      element: <Error />,
+    },
+    {
+      index: true, // ✅ Default route for "/"
+      element: <Home />,
+    },
+  ];
+
   return (
     <BrowserRouter>
       <Routes>
+        {/* ✅ Layout is the parent route */}
+        {/* All child routes will render inside <Outlet /> */}
         <Route path="/" element={<Layout />}>
-          {/* Default page */}
-          <Route index element={<Home />} />
-
-          {/* Nested routes */}
-          <Route
-            path="neet/online-coaching-class-10"
-            element={<Class10Program />}
-          />
-          <Route
-            path="neet/online-coaching-class-11"
-            element={<Class11Program />}
-          />
-          <Route
-            path="neet/online-coaching-class-12"
-            element={<Class12Program />}
-          />
-
-          {/* Error / 404 route */}
-          <Route path="*" element={<Error />} />
+          {/* ✅ map over the routes array to generate child routes */}
+          {routes.map((route, index) => (
+            <Route
+              key={index}
+              path={route.path} // child path (relative to parent "/")
+              index={route.index} // only one route can be index
+              element={route.element} // component to render
+            />
+          ))}
         </Route>
       </Routes>
     </BrowserRouter>
   );
 };
-//Phale layout ko render kro
+
+// ✅ Layout component: always renders Header + Footer
+// Outlet is where child routes will be displayed
 function Layout() {
   return (
     <div>
       <Header />
-      <Outlet />
+      <Outlet /> {/* placeholder for nested routes */}
       <div>Footer || Contact Us</div>
     </div>
   );
 }
 
+// ---------------- Page Components ----------------
 function Class10Program() {
   return <div>Neet programs for class 10th</div>;
 }
@@ -57,10 +77,12 @@ function Class11Program() {
 }
 
 function Class12Program() {
-  const navigate = useNavigate();
+  const navigate = useNavigate(); // ✅ useNavigate hook for programmatic navigation
+
   function redirectUser() {
-    navigate("/");
+    navigate("/"); // redirect user back to home
   }
+
   return (
     <div>
       Neet programs for class 12th
@@ -75,8 +97,9 @@ function Home() {
 
 function Error() {
   const navigate = useNavigate();
+
   function redirectToHome() {
-    navigate("/");
+    navigate("/"); // redirect invalid page → home
   }
 
   return (
@@ -87,6 +110,8 @@ function Error() {
   );
 }
 
+// ✅ Header with navigation links
+// Use <Link> instead of <a> → prevents page reload
 function Header() {
   return (
     <div>
