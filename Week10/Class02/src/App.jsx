@@ -1,42 +1,50 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from "react";
+const bulbContext = createContext();
 
 const App = () => {
   return (
     <div>
-     <LightBulb/>
+      <bulbContext.Provider value={{
+        bulbOn:bulbOn,
+        setBulbOn:setBulbOn
+      }}>
+        <LightBulb />
+      </bulbContext.Provider>
     </div>
-  )
+  );
+};
+function LightBulb() {
+  const [bulbOn, setBulbOn] = useState(true);
+  return (
+    <div>
+      <BulbState bulbOn={bulbOn} />
+      <ToggleBulbState setBulbOn={setBulbOn} />
+    </div>
+  );
 }
-function LightBulb(){
-  const [bulbOn,setBulbOn]=useState(true);
-  return <div>
-    <BulbState bulbOn={bulbOn}/>
-    <ToggleBulbState setBulbOn={setBulbOn}/>
-  </div>
-}
-function BulbState({bulbOn}){
+function BulbState({ bulbOn }) {
+  const {bulbOn}=useContext(bulbContext);
   
- return <div>
-  {bulbOn ? "Bulb On":"Bulb Off"}
- </div>
+  return <div>{bulbOn ? "Bulb On" : "Bulb Off"}</div>;
 }
-function ToggleBulbState({bulbOn,setBulbOn}){
-  function toggle(){
-    setBulbOn(currentState=>!currentState);
-    //Another way 
-   /* setBulbOn(function(currentState){
+function ToggleBulbState({ bulbOn, setBulbOn }) {
+  function toggle() {
+    setBulbOn((currentState) => !currentState);
+    //Another way
+    /* setBulbOn(function(currentState){
       if(currentState==true){
         return false;
       } else{
         return true;
       }
     })*/
-   //setBulbOn(!bulbOn);
+    //setBulbOn(!bulbOn);
   }
-  return <div>
-    <button onClick={toggle}>Toggle the bulb</button>
-  </div>
-
+  return (
+    <div>
+      <button onClick={toggle}>Toggle the bulb</button>
+    </div>
+  );
 }
 
-export default App
+export default App;
