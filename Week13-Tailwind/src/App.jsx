@@ -3,8 +3,9 @@ import './App.css'
 import Button from "./components/Button"
 import Input from './components/Input'
 import { Otp } from './components/Otp'
+ import SideBar from './components/project-1'
 
-
+//Learning 
 // const App = () => {
 //   return (
 //     // <div style={{background:"orange",display:"flex",justifyContent:"space-between"}}>
@@ -17,18 +18,35 @@ import { Otp } from './components/Otp'
 // }
 
 
-const App = () => {
-  return(
-     <div className='h-screen bg-sky-900 '>
-      <div>
-        <h1 className='text-2xl text-white'>Lets get started </h1>
-      </div>
-      {/* <Input/>
-      <Button/> */}
 
-      OTP Validation
-      <Otp/>
-     </div>
+//Otp box 
+// const App = () => {
+//   return(
+//      <div className='h-screen bg-sky-900 '>
+//       <div>
+//         <h1 className='text-2xl text-white'>Lets get started </h1>
+//       </div>
+//       {/* <Input/>
+//       <Button/> */}
+
+//       OTP Validation
+//       <Otp/>
+//      </div>
+//   )
+// }
+
+// export default App
+
+//Proect-1
+
+// import React from 'react'
+// import SideBar from './components/project-1'
+
+const App = () => {
+  return (
+    <div>
+      <SideBar/>
+    </div>
   )
 }
 
