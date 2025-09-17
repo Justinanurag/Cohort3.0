@@ -78,12 +78,69 @@ const TeamLead:TeamLead={
 
 //Week 14 class-2
 
-function isEven(num:number):boolean{
-    if(num%2==0){
-        return true;
-    } else{
-        return false;
-    }
+// function isEven(num:number):boolean{
+//     if(num%2==0){
+//         return true;
+//     } else{
+//         return false;
+//     }
+// }
+// console.log(isEven(10));
+// console.log(isEven(11));
+
+
+//Interface vs Type 
+//Create two types called User and Admin 
+//Create a function that takes either a User or an Admin and prints different messages based on the type
+/*
+interface admin{
+    name:string,
+    permession:string;
 }
-console.log(isEven(10));
-console.log(isEven(11));
+interface user{
+    name:string,
+    age:number,     
+}
+function greet(user:user & admin){
+    console.log("Hello",user.name);
+    console.log("Age",user.age)
+
+}
+greet({
+    name:"Anurag",
+    age:24,
+    permession:"Admin"
+})*/
+
+//Array in typescript
+//Given an array of positive numbers, write a function to find the maximum number in the array.
+function getMax(nums:number[]):number{
+    let maxValue=-1000000000;
+    for(let i=0;i<nums.length;i++){
+        const num = nums[i];
+        if (typeof num === "number" && num > maxValue) {
+            maxValue = num;
+        }
+    }
+    return maxValue;
+}
+getMax([1,2,3,4,5,6,7,8,9,10]);
+
+interface Address{
+    city:string,
+    pincode:number
+}
+
+interface User{
+    name:string,
+    age:number,
+    addressess:Address[];
+}
+
+let user:User={
+    name:"Anurag",
+    age:24,
+    addressess:[
+
+    ]
+}
