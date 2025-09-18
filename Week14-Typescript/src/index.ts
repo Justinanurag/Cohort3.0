@@ -114,6 +114,7 @@ greet({
 
 //Array in typescript
 //Given an array of positive numbers, write a function to find the maximum number in the array.
+/*
 function getMax(nums:number[]):number{
     let maxValue=-1000000000;
     for(let i=0;i<nums.length;i++){
@@ -124,23 +125,66 @@ function getMax(nums:number[]):number{
     }
     return maxValue;
 }
-getMax([1,2,3,4,5,6,7,8,9,10]);
+const ans:number=getMax([1,2,3,4,5,6,7,8,9,10]);
+console.log(ans)
+*/
+//Filter on age >18
+// interface User{
+//     firstName:string,
+//     lastName:string,
+//     age:number
+// }
 
-interface Address{
-    city:string,
-    pincode:number
-}
+// function filterUsers(users: User[]): User[] {
+//     let ans: User[] = [];
+// for (let i = 0; i < users.length; i++) {
+//     const user = users[i];
+//     if (user && user.age > 18) {
+//         ans.push(user);
+//     }
+// }
+//     return ans;
+// }
 
+// const answer=filterUsers([
+//     {firstName:"Anurag",lastName:"Kumar",age:24},
+//     {firstName:"Ankit",lastName:"Kumar",age:17},
+// ])
+
+// console.log(answer);
+
+
+
+
+
+
+
+// Self practice 
 interface User{
     name:string,
     age:number,
-    addressess:Address[];
+    address:string
 }
 
-let user:User={
-    name:"Anurag",
-    age:24,
-    addressess:[
+//Apply there filter condition for adult age>18
 
-    ]
+function filterAdult(users:User[]){
+    let ans:User[]=[];
+    for(let i=0;i<users.length;i++){
+        const user=users[i];
+        if(user && user.age>18){
+            ans.push(user);
+        }
+    }
+    return ans;
 }
+
+const Adult=filterAdult([
+        {name:"Anurag", age:24,address:"Bhilai"},
+        {name:"Ankit", age:17,address:"Bhilai"},
+        {name:"Rza", age:16,address:"Bhilai"},
+        {name:"Jhon", age:23,address:"Bhilai"},
+        {name:"Doe", age:13,address:"Bhilai"},
+])
+
+console.log(Adult);
