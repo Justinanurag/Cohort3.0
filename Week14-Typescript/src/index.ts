@@ -154,12 +154,8 @@ console.log(ans)
 // console.log(answer);
 
 
-
-
-
-
-
 // Self practice 
+/*
 interface User{
     name:string,
     age:number,
@@ -188,3 +184,130 @@ const Adult=filterAdult([
 ])
 
 console.log(Adult);
+*/
+/*
+//Week-14 class-3
+//Sum of two age
+interface User{
+    name:string,
+    age:number,
+     
+}
+
+function sumOfAge(user1:User,user2:User):number{
+    return user1.age + user2.age;
+}
+
+const AgesAre=sumOfAge({name:"Anurag",age:21},{name:"Ankit",age:17});
+console.log(AgesAre);
+*/
+//Learning Pick in typescript
+// interface User{
+//     id:string,
+//     name:string,
+//     email:string,
+//     password:string
+//     age:number
+// }
+
+
+//Partial type
+// interface updateProfile{
+//     name?:string,
+//     age?:number,
+//     email?:string
+//     password?:string
+// }
+
+//insted of writing above code we can use pick
+// type updateProfile=Pick<User,"name" | "age" | "email" | "password">
+
+//Learning Omit in typescript
+// type updateProfile=Omit<User,"id">
+
+// function updateUser(updateProfile:updateProfile){
+
+// }
+
+/*
+//Readonly
+//  type User={
+//     readonly name:string,
+//     readonly age:number,
+//  }
+
+//Alternative
+    type User=Readonly<{   
+    name:string,
+    age:number,
+ }>
+
+ const user:User={
+    name:"Anurag",
+    age:24,
+ }
+    console.log(user);
+//user.name="Ankit"
+// console.log(user);
+*/
+
+//Record : Give me cleaner way to write object type
+/*
+ type User=Record<string,{name:string,age:number}>
+
+ const user:User={
+    "anurag":{name:"Anurag",age:24},
+    "ankit":{name:"Ankit",age:17},
+ }
+
+ console.log(user);
+ */
+
+
+ /*
+import express from "express";
+import { success, z } from "zod";
+const app = express();
+const PORT = 3000; 
+app.use(express.json());
+
+
+//Defining the Schema for profile update using Zod
+const profileSchema = z.object({
+    name:z.string().min(2,{message:"Name should be at least 2 characters long"}).max(100),
+    age:z.number().min(0,{message:"Age should be a positive number"}).max(120,{message:"Age should be less than 120"}),
+    email:z.string().email({message:"Invalid email address"}),
+    password:z.string().min(6,{message:"Password should be at least 6 characters long"})
+});
+// type finalProfileSchema= {
+//     name:string,
+//     age:number,
+//     email:string,
+//     password:string
+// }
+//Another way to define type from zod schema using infer
+type finalProfileSchema=z.infer<typeof profileSchema>;
+
+app.put(("/profile"),(req,res)=>{
+    const parseResult=profileSchema.safeParse(req.body);
+
+    const updateProfile:finalProfileSchema=req.body;
+
+    if(!success){
+        res.status(400).json(parseResult.error);
+    }
+
+    //Upadate 
+    res.status(200).json({
+        message:"Profile updated successfully",
+    })
+})
+
+app.get("/", (req, res) => {
+  res.send("Hello, Express with TypeScript!");
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server is running at http://localhost:${PORT}`);
+});
+*/
