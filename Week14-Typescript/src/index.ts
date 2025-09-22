@@ -87,7 +87,39 @@ const TeamLead:TeamLead={
 // }
 // console.log(isEven(10));
 // console.log(isEven(11));
+/*
+interface User{
+    name:string;
+    age:number;
+    isLegal():boolean;
+}
 
+class Manager implements User{
+    name:string;
+    age:number;
+    constructor(name:string,age:number){
+        this.name=name;
+        this.age=age;
+    }
+    isLegal() {
+        return this.age>18
+    }
+}
+
+const m=new Manager("harkirat",21);
+console.log(m);
+console.log(m.isLegal())
+*/
+
+// interface User{
+//     name:string;
+//     age:number;
+// }
+
+// type User={
+//     name:string,
+//     age:number
+// }
 
 //Interface vs Type 
 //Create two types called User and Admin 
