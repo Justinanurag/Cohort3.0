@@ -2,14 +2,19 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
-const connectDB = async () => {
+
+const connectDB = async (): Promise<void> => {
   try {
     mongoose.connection.on("connected", () => {
-      console.log("Database connected Successfully!");
+      console.log("✅ Database connected successfully!");
     });
-    await mongoose.connect(
-      `mongodb+srv://monoperson948:oaD7ted4jl1rGL7e@cluster0.4snkggy.mongodb.net/Second_Brain`
-    );
+
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is not defined in .env");
+    }
+
+    await mongoose.connect(process.env.MONGO_URI, {
+    });
   } catch (error: any) {
     console.error("❌ Database connection failed:", error.message);
     process.exit(1);
