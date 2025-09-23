@@ -3,8 +3,7 @@ import express from "express";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import userModel from "../models/userModel.js";
-
+import {User } from "../models/userModel.js";
 //Register Controller
 export const register = async (
   req: Request,
@@ -22,7 +21,7 @@ export const register = async (
 
   try {
     // Check if user already exists
-    const existingUser = await userModel.findOne({ email });
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -34,7 +33,7 @@ export const register = async (
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user
-    const user = new userModel({
+    const user = new User({
       name,
       email,
       password: hashedPassword,
@@ -73,7 +72,7 @@ export const login = async (req: Request, res: Response): Promise<Response> => {
   }
 
   try {
-    const user = await userModel.findOne({ email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({
         success: false,
