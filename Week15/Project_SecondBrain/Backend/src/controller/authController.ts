@@ -1,11 +1,15 @@
-import type { Response ,Request} from 'express';
-import express from 'express';
+import type { Response, Request } from "express";
+import express from "express";
 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import userModel from "../models/userModel.js"; 
+import userModel from "../models/userModel.js";
 
-export const register = async (req: Request, res: Response): Promise<Response> => {
+//Register Controller
+export const register = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
   const { name, email, password } = req.body;
 
   // Basic validation
@@ -38,17 +42,9 @@ export const register = async (req: Request, res: Response): Promise<Response> =
 
     await user.save();
 
-    // Generate JWT token
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET as string,
-      { expiresIn: "4d" }
-    );
-
     return res.status(201).json({
       success: true,
       message: "✅ Registration successful",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -63,3 +59,56 @@ export const register = async (req: Request, res: Response): Promise<Response> =
     });
   }
 };
+
+//Login Controller
+export const login = async (req: Request, res: Response): Promise<Response> => {
+  const { email, password } = req.body;
+
+  //Validation
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "❌ Missing Details",
+    });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "⚠️ User not found, Please register",
+      });
+    }
+
+    //Cpmpare Password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "❌ Invalid Credentials",
+      });
+    }
+
+    //Generate JWT Token
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET as string, {
+      expiresIn: "4d",
+    });
+    return res.status(200).json({
+      success: true,
+      message: "✅ Login Successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "🚨 Server Error",
+    });
+  }
+};
+

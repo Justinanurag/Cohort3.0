@@ -19,6 +19,7 @@ app.listen(PORT, () => {
 
 
 app.use("/api/v1/",authRouter);
+app.use("/api/v1",authRouter);
 // app.post("/api/v1/user" ,userRouter);
 
 // app.post("/api/v1/content", );
