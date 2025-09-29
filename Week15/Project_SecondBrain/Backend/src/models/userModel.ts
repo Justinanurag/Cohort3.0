@@ -22,5 +22,15 @@ const ContentSchema =new Schema({
 
 const Content = mongoose.model("Content", ContentSchema);
 
-export{User,Content};
+//Shareable Link Schema
+const LinkSchema =new Schema({
+    hash:String,
+    userId:{type:mongoose.Types.ObjectId,ref:"User",required:true,unique:true}
+})
+
+const Link = mongoose.model("Link", LinkSchema);
+
+export{User,Content,Link};
+
+
 
