@@ -74,8 +74,8 @@ export const delContent = async (req: Request, res: Response) => {
 
 export const shareLink = async (req: Request, res: Response) => {
   try {
-    const { share } = req.body;
-    const userId = (req as any).userId; // adjust typing if you have auth middleware
+    const share: boolean = Boolean(req.body.share);
+    const userId = (req as any).userId; 
 
     if (!userId) {
       return res.status(401).json({
@@ -85,7 +85,6 @@ export const shareLink = async (req: Request, res: Response) => {
     }
 
     if (share) {
-      // ✅ Check if a link already exists for this user
       let link = await Link.findOne({ userId });
 
       if (link) {
@@ -96,8 +95,7 @@ export const shareLink = async (req: Request, res: Response) => {
         });
       }
 
-      // ✅ Create new link
-      const hash = random(10);
+      const hash = random(20); 
       link = await Link.create({ userId, hash });
 
       return res.status(201).json({
@@ -105,8 +103,8 @@ export const shareLink = async (req: Request, res: Response) => {
         hash: link.hash,
         message: "Sharable link generated successfully",
       });
+
     } else {
-      // ✅ Remove link if exists
       const result = await Link.deleteOne({ userId });
 
       if (result.deletedCount === 0) {
@@ -121,48 +119,44 @@ export const shareLink = async (req: Request, res: Response) => {
         message: "Removed link successfully",
       });
     }
+
   } catch (error: any) {
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "error.message",
     });
   }
 };
+
 //Get shareLink
 export const getShareLink = async (req: Request, res: Response) => {
   try {
-    const { hash } = req.body.shareLink; 
-
-    if (!hash) {
-      return res.status(400).json({
-        success: false,
-        message: "Hash is required",
-      });
-    }
-
-    // find link by hash
+    const hash  = req.params.getShareLink; 
+   if(!hash){
+    return res.json({
+      sussess:false,
+      message:"Hash are required!!!!!"
+    })
+   }
     const link = await Link.findOne({ hash });
 
     if (!link) {
       return res.status(404).json({
         success: false,
-        message: "Sorry, incorrect input!",
+        message: "Invalid or expired link",
       });
     }
 
-    // get content for the user
     const content = await Content.find({ userId: link.userId });
 
-    // get user details
-    const user = await User.findOne({ userId: link.userId });
+    const user = await User.findById(link.userId).select("-password"); 
 
     return res.status(200).json({
       success: true,
-      message: "Content shared successfully",
-      user: user,
-      content: content,
+      message: "Content retrieved successfully",
+      user,
+      content,
     });
-
   } catch (error: any) {
     return res.status(500).json({
       success: false,
