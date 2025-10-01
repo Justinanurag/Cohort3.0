@@ -1,9 +1,10 @@
-import type { ReactElement, ReactNode } from "react";
+import type { ReactElement } from "react";
 
 interface ButtonProps {
   variant: "primary" | "secondary";
   text: string;
   startIcon?: ReactElement; // optional
+  onClick?:()=>void
 }
 
 const variantClasses = {
@@ -13,11 +14,12 @@ const variantClasses = {
 
 const defaultStyles = "px-4 py-2 rounded-md flex items-center gap-2 font-medium";
 
-export function Button({ variant, text, startIcon }: ButtonProps) {
+export function Button({ variant, text, startIcon,onClick  }: ButtonProps) {
   return (
     <button
       type="button"
       className={`${variantClasses[variant]} ${defaultStyles}`}
+      onClick={onClick}
     >
       {startIcon && <span>{startIcon}</span>}
       <span>{text}</span>
