@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
-import { ReactElement } from "react";
+import { ReactElement, useState, ChangeEvent } from "react";
+import axios from "axios";
 
 interface CreateContentModalProps {
     open: boolean;
@@ -14,15 +15,49 @@ interface ButtonProps {
 }
 
 export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
+    const [link, setLink] = useState("");
+    const [type, setType] = useState("");
+
     if (!open) return null;
+    const BASE_URL = import.meta.env.VITE_BASEURL;
 
     //Onclick outside modal close
     const handleModalClick = (e: React.MouseEvent<HTMLDivElement>) => {
         e.stopPropagation();
     };
 
-    const handleSubmit = () => {
-        console.log("Form submitted");
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        if (!link || !type) {
+            alert("Please provide both link and type");
+            return;
+        }
+
+        try {
+            const response = await axios.post(
+                `${BASE_URL}/api/v1/content`,
+                {
+                    link,
+                    type,
+                    tags: [], 
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`, // if your backend uses JWT
+                    },
+                }
+            );
+
+            console.log("✅ Content added:", response.data);
+            alert(response.data.message || "Content added successfully");
+            setLink("");
+            setType("");
+
+        } catch (error: any) {
+            console.error("❌ Error adding content:", error.response?.data || error.message);
+            alert(error.response?.data?.message || "Failed to add content");
+        }
     };
 
     return (
@@ -38,12 +73,12 @@ export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
                 </button>
 
                 {/* Modal content */}
-                <div className="mt-4 flex flex-col gap-4">
+                <form className="mt-4 flex flex-col gap-4" onSubmit={handleSubmit}>
                     <h2 className="text-lg font-semibold text-center ">Add Content</h2>
-                    <Input placeholder="Title" />
-                    <Input placeholder="Link" />
-                    <Button variant="primary" text="Submit" onClick={handleSubmit} />
-                </div>
+                    <Input placeholder="Link" onChange={e => setLink(e.target.value)} />
+                    <Input placeholder="Type" onChange={e => setType(e.target.value)} />
+                    <Button variant="primary" text="Submit" />
+                </form>
             </div>
         </div>
     );

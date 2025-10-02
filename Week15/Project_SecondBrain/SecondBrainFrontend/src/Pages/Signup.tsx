@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import {
   Box,
   Button,
@@ -16,6 +19,7 @@ import {
 } from "@mui/material";
 
 export default function SignUpPage() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,6 +31,10 @@ export default function SignUpPage() {
   const [nameErrorMsg, setNameErrorMsg] = useState("");
   const [emailErrorMsg, setEmailErrorMsg] = useState("");
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // ✅ Define Base URL once
+  const BASE_URL = import.meta.env.VITE_BASEURL;
 
   const validateInputs = () => {
     let valid = true;
@@ -61,12 +69,30 @@ export default function SignUpPage() {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validateInputs()) return;
 
-    console.log("Name:", name, "Email:", email, "Password:", password);
-    // call your API here
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/v1/register`, {
+        name,
+        email,
+        password,
+      });
+
+      console.log("✅ Sign up successful:", response.data);
+      alert("Sign up successful!");
+      navigate("/signin");
+
+    } catch (error: any) {
+      console.error("❌ Error during sign up:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Sign up failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -81,7 +107,11 @@ export default function SignUpPage() {
           Sign Up
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
           {/* Name Field */}
           <FormControl fullWidth>
             <FormLabel htmlFor="name">Name</FormLabel>
@@ -129,17 +159,26 @@ export default function SignUpPage() {
 
           <FormControlLabel control={<Checkbox />} label="I agree to the Terms and Conditions" />
 
-          <Button type="submit" variant="contained" fullWidth>
-            Sign Up
+          <Button type="submit" variant="contained" fullWidth disabled={loading}>
+            {loading ? "Signing Up..." : "Sign Up"}
           </Button>
         </Box>
 
         <Divider sx={{ my: 3 }}>or</Divider>
 
-        <Button variant="outlined" fullWidth sx={{ mb: 1 }} onClick={() => alert("Sign up with Google")}>
+        <Button
+          variant="outlined"
+          fullWidth
+          sx={{ mb: 1 }}
+          onClick={() => alert("Sign up with Google")}
+        >
           Sign up with Google
         </Button>
-        <Button variant="outlined" fullWidth onClick={() => alert("Sign up with Facebook")}>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => alert("Sign up with Facebook")}
+        >
           Sign up with Facebook
         </Button>
 

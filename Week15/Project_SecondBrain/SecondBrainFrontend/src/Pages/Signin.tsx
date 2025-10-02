@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Button,
@@ -13,15 +15,22 @@ import {
   Divider,
   Link,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 
 export default function SignInPage() {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
   const [emailErrorMessage, setEmailErrorMessage] = useState("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const BASE_URL = import.meta.env.VITE_BASEURL;
 
   const validateInputs = () => {
     let valid = true;
@@ -47,11 +56,30 @@ export default function SignInPage() {
     return valid;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!validateInputs()) return;
-    console.log("Email:", email, "Password:", password);
-    // call your API here
+
+    setLoading(true);
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/v1/login`, {
+        email,
+        password,
+      });
+      //Save in local storage 
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("user", JSON.stringify(response.data.user));
+      console.log("✅ Sign in successful:", response.data);
+      navigate("/dashboard");
+
+    } catch (error: any) {
+      console.error("❌ Error during sign in:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Sign in failed!");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -66,7 +94,12 @@ export default function SignInPage() {
           Sign In
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        >
+          {/* Email Field */}
           <FormControl fullWidth>
             <FormLabel htmlFor="email">Email</FormLabel>
             <TextField
@@ -81,6 +114,7 @@ export default function SignInPage() {
             />
           </FormControl>
 
+          {/* Password Field */}
           <FormControl fullWidth>
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextField
@@ -97,21 +131,41 @@ export default function SignInPage() {
 
           <FormControlLabel control={<Checkbox />} label="Remember me" />
 
-          <Button type="submit" variant="contained" fullWidth>
-            Sign In
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={loading}
+            startIcon={loading ? <CircularProgress size={20} /> : null}
+          >
+            {loading ? "Signing In..." : "Sign In"}
           </Button>
 
-          <Link component="button" variant="body2" sx={{ alignSelf: "center" }}>
+          <Link
+            component="button"
+            variant="body2"
+            sx={{ alignSelf: "center" }}
+            onClick={() => alert("Reset password flow")}
+          >
             Forgot your password?
           </Link>
         </Box>
 
         <Divider sx={{ my: 3 }}>or</Divider>
 
-        <Button variant="outlined" fullWidth sx={{ mb: 1 }} onClick={() => alert("Sign in with Google")}>
+        <Button
+          variant="outlined"
+          fullWidth
+          sx={{ mb: 1 }}
+          onClick={() => alert("Sign in with Google")}
+        >
           Sign in with Google
         </Button>
-        <Button variant="outlined" fullWidth onClick={() => alert("Sign in with Facebook")}>
+        <Button
+          variant="outlined"
+          fullWidth
+          onClick={() => alert("Sign in with Facebook")}
+        >
           Sign in with Facebook
         </Button>
 

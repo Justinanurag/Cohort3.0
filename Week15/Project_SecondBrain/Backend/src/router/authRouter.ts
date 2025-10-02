@@ -4,6 +4,7 @@ import {content,getContent,delContent,shareLink,getShareLink}from "../controller
 import { userMiddleware } from '../middleware/userAuth.js';
 const authRouter=express.Router();
 
+
 authRouter.post('/register',register);
 authRouter.post('/login',login);
 authRouter.post('/content',userMiddleware,content);

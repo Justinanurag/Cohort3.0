@@ -3,12 +3,17 @@ import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
 import { useState } from "react";
-import { Sidebar } from "../components/Sidebar";
+import Sidebar  from "../components/Sidebar";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const [modalOpen,setModalOpen]=useState(false);
+  const navigate = useNavigate();
 
-
+  const token=localStorage.getItem("token");
+  if(!token){
+    navigate("/signin")
+  }
 
   return (
     <div>
@@ -17,8 +22,6 @@ const Dashboard = () => {
       <CreateContentModal open={modalOpen} onClose={()=>{
         setModalOpen(false)
       }}/>
-      
-      {/* Header buttons */}
       <div className="flex gap-4 self-end mb-6">
         <Button
         onClick={()=>{
@@ -40,6 +43,11 @@ const Dashboard = () => {
           type="twitter"
           link="https://x.com/imVkohli/status/1147837252552146944"
           title="X.com"
+        />
+        <Card
+          type="youtube"
+          link="https://www.youtube.com/watch?v=c-FKlE3_kHo&list=RDc-FKlE3_kHo&start_radio=1"
+          title="YouTube"
         />
         <Card
           type="youtube"
