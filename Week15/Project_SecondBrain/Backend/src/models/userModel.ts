@@ -15,8 +15,10 @@ const User = mongoose.model("User", userSchema);
 const ContentSchema =new Schema({
     title:String,
     link:String,
+    type: { type: String, enum: ["youtube", "twitter"], required: true },
     tags:[{type:mongoose.Types.ObjectId,ref:'Tag'}],
     userId:{type:mongoose.Types.ObjectId,ref:"User",required:true},
+    
     // authorId:{type:mongoose.Types.ObjectId,ref:"User",required:true}
 })
 
