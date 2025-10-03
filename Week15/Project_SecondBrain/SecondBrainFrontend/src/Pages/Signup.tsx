@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import {
   Box,
@@ -33,7 +34,6 @@ export default function SignUpPage() {
   const [passwordErrorMsg, setPasswordErrorMsg] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Define Base URL once
   const BASE_URL = import.meta.env.VITE_BASEURL;
 
   const validateInputs = () => {
@@ -83,16 +83,39 @@ export default function SignUpPage() {
         password,
       });
 
-      console.log("✅ Sign up successful:", response.data);
-      alert("Sign up successful!");
-      navigate("/signin");
+      Swal.fire({
+        icon: "success",
+        title: "Sign Up Successful",
+        text: "Your account has been created!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
 
+      console.log("✅ Sign up successful:", response.data);
+      navigate("/signin");
     } catch (error: any) {
-      console.error("❌ Error during sign up:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Sign up failed!");
+      console.error(
+        "❌ Error during sign up:",
+        error.response?.data || error.message
+      );
+
+      Swal.fire({
+        icon: "error",
+        title: "Sign Up Failed",
+        text: error.response?.data?.message || "Unable to register.",
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInfo = (message: string) => {
+    Swal.fire({
+      icon: "info",
+      title: message,
+      timer: 1500,
+      showConfirmButton: false,
+    });
   };
 
   return (
@@ -103,7 +126,11 @@ export default function SignUpPage() {
     >
       <CssBaseline />
       <Card sx={{ p: 4, width: "100%", maxWidth: 400 }}>
-        <Typography variant="h4" component="h1" sx={{ mb: 3, textAlign: "center" }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{ mb: 3, textAlign: "center" }}
+        >
           Sign Up
         </Typography>
 
@@ -157,7 +184,10 @@ export default function SignUpPage() {
             />
           </FormControl>
 
-          <FormControlLabel control={<Checkbox />} label="I agree to the Terms and Conditions" />
+          <FormControlLabel
+            control={<Checkbox />}
+            label="I agree to the Terms and Conditions"
+          />
 
           <Button type="submit" variant="contained" fullWidth disabled={loading}>
             {loading ? "Signing Up..." : "Sign Up"}
@@ -170,14 +200,14 @@ export default function SignUpPage() {
           variant="outlined"
           fullWidth
           sx={{ mb: 1 }}
-          onClick={() => alert("Sign up with Google")}
+          onClick={() => handleInfo("Sign up with Google")}
         >
           Sign up with Google
         </Button>
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => alert("Sign up with Facebook")}
+          onClick={() => handleInfo("Sign up with Facebook")}
         >
           Sign up with Facebook
         </Button>

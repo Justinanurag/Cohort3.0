@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import {
   Box,
   Button,
@@ -68,18 +69,43 @@ export default function SignInPage() {
         email,
         password,
       });
-      //Save in local storage 
+
+      // Save in local storage
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      console.log("✅ Sign in successful:", response.data);
-      navigate("/dashboard");
 
+      Swal.fire({
+        icon: "success",
+        title: "Signed In",
+        text: "You have successfully signed in!",
+        timer: 1000,
+        showConfirmButton: false,
+      });
+
+      navigate("/dashboard");
     } catch (error: any) {
-      console.error("❌ Error during sign in:", error.response?.data || error.message);
-      alert(error.response?.data?.message || "Sign in failed!");
+      console.error(
+        "❌ Error during sign in:",
+        error.response?.data || error.message
+      );
+
+      Swal.fire({
+        icon: "error",
+        title: "Sign In Failed",
+        text: error.response?.data?.message || "Invalid email or password",
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInfo = (message: string) => {
+    Swal.fire({
+      icon: "info",
+      title: message,
+      timer: 1500,
+      showConfirmButton: false,
+    });
   };
 
   return (
@@ -90,7 +116,11 @@ export default function SignInPage() {
     >
       <CssBaseline />
       <Card sx={{ p: 4, width: "100%", maxWidth: 400 }}>
-        <Typography variant="h4" component="h1" sx={{ mb: 3, textAlign: "center" }}>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{ mb: 3, textAlign: "center" }}
+        >
           Sign In
         </Typography>
 
@@ -145,7 +175,7 @@ export default function SignInPage() {
             component="button"
             variant="body2"
             sx={{ alignSelf: "center" }}
-            onClick={() => alert("Reset password flow")}
+            onClick={() => handleInfo("Reset password flow")}
           >
             Forgot your password?
           </Link>
@@ -157,14 +187,14 @@ export default function SignInPage() {
           variant="outlined"
           fullWidth
           sx={{ mb: 1 }}
-          onClick={() => alert("Sign in with Google")}
+          onClick={() => handleInfo("Sign in with Google")}
         >
           Sign in with Google
         </Button>
         <Button
           variant="outlined"
           fullWidth
-          onClick={() => alert("Sign in with Facebook")}
+          onClick={() => handleInfo("Sign in with Facebook")}
         >
           Sign in with Facebook
         </Button>
