@@ -1,4 +1,5 @@
-import { ReactElement } from "react";
+import type { ReactElement } from "react";
+
 
 interface SidebarItemProps {
   text: string;
