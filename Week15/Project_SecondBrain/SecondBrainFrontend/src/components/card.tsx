@@ -5,7 +5,7 @@ interface CardProps {
   title: string;
   link: string;
   type: "twitter" | "youtube";
-  onClick:()=>void;
+  onClick?:()=>void;
 }
 
 export function Card({ title, link, type }: CardProps) {
