@@ -7,6 +7,8 @@ import Sidebar from "../components/sidebar";
 import { useNavigate } from "react-router-dom";
 import { useContent } from "../hooks/useContent";
 import axios from "axios";
+import Swal from "sweetalert2";
+
 const Dashboard = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const navigate = useNavigate();
@@ -18,6 +20,41 @@ const Dashboard = () => {
     navigate("/signin");
   }
 
+  const handleShare = async () => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/shareLink`,
+        { share: true },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token") || "",
+          },
+        }
+      );
+
+      const shareUrl = `http://localhost:5173/shareLink/${response.data.hash}`;
+      console.log("Generated share URL:", shareUrl);
+
+      // Copy to clipboard
+      await navigator.clipboard.writeText(shareUrl);
+
+      Swal.fire({
+        icon: "success",
+        title: "Link Copied!",
+        text: "Share link has been copied to clipboard.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (error: any) {
+      console.error("Error creating share link:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "Failed to create share link",
+      });
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
@@ -26,6 +63,7 @@ const Dashboard = () => {
           open={modalOpen}
           onClose={() => setModalOpen(false)}
         />
+
         <div className="flex gap-4 self-end mb-8">
           <Button
             onClick={() => setModalOpen(true)}
@@ -38,30 +76,7 @@ const Dashboard = () => {
             variant="secondary"
             text="Share"
             startIcon={<Share2 size={16} color="currentColor" />}
-            onClick={async () => {
-              try {
-                const response = await axios.post(
-                  `${BASE_URL}/api/v1/shareLink`,
-                  {
-                    share: true,
-                  },
-                  {
-                    headers: {
-                      Authorization: localStorage.getItem("token") || "",
-                    },
-                  }
-                );
-
-                const shareUrl = `http://localhost:5173/shareLink/${response.data.hash}`;
-                console.log("Generated share URL:", shareUrl);
-
-                // Example: copy to clipboard
-                await navigator.clipboard.writeText(shareUrl);
-                alert("Share link copied to clipboard!");
-              } catch (error) {
-                console.error("Error creating share link:", error);
-              }
-            }}
+            onClick={handleShare}
             className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded-lg transition-colors duration-200"
           />
         </div>

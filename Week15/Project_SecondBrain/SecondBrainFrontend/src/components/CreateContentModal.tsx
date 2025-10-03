@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 import { type ReactElement, useState, type ChangeEvent } from "react";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 interface CreateContentModalProps {
   open: boolean;
@@ -14,6 +15,7 @@ interface ButtonProps {
   onClick?: () => void;
   type?: "button" | "submit";
 }
+
 enum ContentType {
   Youtube = "youtube",
   Twitter = "twitter",
@@ -35,19 +37,23 @@ export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
     e.preventDefault();
 
     if (!link || !title) {
-      alert("Please provide both link and title");
+      Swal.fire({
+        icon: "warning",
+        title: "Missing Fields",
+        text: "Please provide both link and title",
+      });
       return;
     }
 
     try {
-        const response = await axios.post(
-          `${BASE_URL}/api/v1/content`,
-          {
-            link,
-            title,
-            type,
-            tags: [],
-          },
+      const response = await axios.post(
+        `${BASE_URL}/api/v1/content`,
+        {
+          link,
+          title,
+          type,
+          tags: [],
+        },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -55,17 +61,21 @@ export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
         }
       );
 
-      console.log("✅ Content added:", response.data);
-      alert(response.data.message || "Content added successfully");
+      Swal.fire({
+        icon: "success",
+        title: "Success",
+        text: response.data.message || "Content added successfully!",
+      });
+
       setLink("");
       setTitle("");
       onClose();
     } catch (error: any) {
-      console.error(
-        "❌ Error adding content:",
-        error.response?.data || error.message
-      );
-      alert(error.response?.data?.message || "Failed to add content");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: error.response?.data?.message || "Failed to add content",
+      });
     }
   };
 
@@ -92,7 +102,6 @@ export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
             Add New Content
           </h2>
 
-          {/* Input fields */}
           <Input
             placeholder="Paste content link"
             value={link}
@@ -120,7 +129,6 @@ export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
             />
           </div>
 
-          {/* Submit button */}
           <Button variant="primary" text="Submit" type="submit" />
         </form>
       </div>
