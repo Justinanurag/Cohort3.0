@@ -4,7 +4,8 @@ interface ButtonProps {
   variant: "primary" | "secondary";
   text: string;
   startIcon?: ReactElement; // optional
-  onClick?:()=>void
+  onClick?:()=>void;
+  className?: string;
 }
 
 const variantClasses = {

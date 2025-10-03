@@ -3,25 +3,29 @@ import { Content, Link ,User} from "../models/userModel.js";
 import { random } from "../util.js";
 import { hash } from "bcryptjs";
 
-export const content = async (req: Request, res: Response) => {
-  const { link, type } = req.body;
-
+export const createContent = async (req: Request, res: Response) => {
   try {
-    await Content.create({
+    const { title, link, type, tags } = req.body;
+
+    if (!title || !link) {
+      return res.status(400).json({ success: false, message: "Title and link are required" });
+    }
+
+    const newContent = new Content({
+      title,
       link,
       type,
+      tags,
       //@ts-ignore
       userId: req.userId,
-      tags: [],
     });
-    return res.json({
-      message: "Content Added",
-    });
-  } catch (error: any) {
-    return res.status(402).json({
-      success: false,
-      message: error.message,
-    });
+
+    await newContent.save();
+
+    res.status(201).json({ success: true, message: "Content added successfully", data: newContent });
+  } catch (error) {
+    console.error("Error adding content:", error);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };
 //getContent
@@ -37,9 +41,11 @@ export const getContent = async (req: Request, res: Response) => {
     }
 
     const content = await Content.find({ userId }).populate("userId", "name");
+     console.log(content)
     return res.status(200).json({
       success: true,
       content,
+     
     });
   } catch (error) {
     console.error("Error fetching content:", error);
