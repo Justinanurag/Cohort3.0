@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT||3000;
 
 app.use(cors({
-  origin: "https://secondbrain-sepia.vercel.app", 
+  origin: process.env.ORIGIN, 
   methods: ["GET", "POST", "PUT", "DELETE"], 
   credentials: true, 
 }));
