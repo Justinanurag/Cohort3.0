@@ -1,0 +1,94 @@
+# Node modules
+/node_modules/
+
+# Build output
+/dist/
+/build/
+/lib/
+
+# TypeScript cache
+/.tsbuildinfo
+
+# Environment files (secrets)
+.env
+.env.*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Dependency lockfiles (optionally ignore if you commit them)
+/package-lock.json
+/yarn.lock
+/pnpm-lock.yaml
+
+# Optional: keep lockfiles if you want deterministic installs (recommended to commit)
+# If you want to commit lockfiles, remove the three lines above.
+
+# Test coverage
+/coverage/
+
+# Debug and profiler
+chrome-debug.log
+.v8-coverage/
+
+# Temporary files
+/.cache/
+/tmp/
+/temp/
+
+# Secret or local config files
+/config/local-*.json
+/secrets.json
+
+# Docker
+/docker-compose.override.yml
+docker-compose.override.yml
+.Dockerfile.dev
+
+# VS Code recommended settings folder
+/.vscode-test/
+
+# Build artifacts from some tools
+*.tsbuildinfo
+*.map
+
+# IDE language servers
+.tern-port
+
+# Mac file system
+.AppleDouble
+.LSOverride
+
+# Yarn PnP
+.pnp.*
+.pnp
+
+# JetBrains
+out/
+
+# Optional: npm package distribution files
+*.tgz
+
+# Optional: Ignore coverage reports from CI
+coverage/
+
+# End
