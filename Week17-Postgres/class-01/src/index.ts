@@ -1,53 +1,53 @@
-import { Client } from "pg";
-import express from "express"
+import express from "express";
+import type { Request, Response } from "express";
 
-const app=express();
+import { Client } from "pg";
+
+const PORT = process.env.PORT || 3000;
+
+const app = express();
+app.use(express.json()); 
+
+
 const pgClient = new Client({
   user: "neondb_owner",
   password: "npg_OFbL8stQaNW9",
   host: "ep-sparkling-resonance-adqjcbl7-pooler.c-2.us-east-1.aws.neon.tech",
   database: "neondb",
   port: 5432,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: { rejectUnauthorized: false },
 });
 
-async function main() {
+// Connect once and keep it open
+pgClient.connect()
+  .then(() => console.log("✅ Database connected successfully!"))
+  .catch((err) => console.error("❌ Database connection error:", err));
+
+// --- Signup API ---
+app.post("/signup", async (req: Request, res: Response) => {
   try {
-    await pgClient.connect();
-    console.log("✅ Database connected successfully!");
+    const { username, email, password } = req.body;
 
-    const res = await pgClient.query("SELECT * FROM users;");
-    console.log("📦 Query result:");
-    console.table(res.rows);
-  } catch (err) {
-    console.error("❌ Error connecting to database:", err);
-  } finally {
-    await pgClient.end();
-    console.log("🔒 Connection closed.");
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
+    const sqlQuery = "INSERT INTO users (username, email, password) VALUES ($1, $2, $3)";
+    await pgClient.query(sqlQuery, [username, email, password]);
+
+    res.json({ message: "✅ You have signed up successfully!" });
+  } catch (error) {
+    console.error("Signup error:", error);
+    res.status(500).json({ error: "Something went wrong" });
   }
-}
+});
 
-main();
+// --- Test Route ---
+app.get("/", (req, res) => {
+  res.send("Server is running ✅");
+});
 
-app.post("/signup",(req,res)=>{
-    const username=req.body.username;
-    const password =req.body.password;
-    const email=req.body.password;
-
-    let sqlQuery="INSERT INTO user(username,email,password) VALUES("
-    sqlQuery+=username;
-    sqlQuery+=","
-    sqlQuery+=email
-    sqlQuery+=password
-    
-    sqlQuery+=
-    ");"
-
-    const response=await pgClient.query(`INSERT INTO users (username,email,password) VALUES (${username}),${email},${password}`);
-
-    res.json({
-        message:"You have signed up"
-    })
-})
+// --- Start Server ---
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
