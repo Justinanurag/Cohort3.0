@@ -1,11 +1,10 @@
-// Importing necessary modules
 import express from "express";
 import type { Request, Response } from "express";
-import { Client } from "pg"; // PostgreSQL client
+import { Client } from "pg"; 
 
 // Create an Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT =  3000;
 
 // Middleware to parse JSON body from requests
 app.use(express.json());
@@ -24,7 +23,7 @@ const pgClient = new Client({
 pgClient
   .connect()
   .then(() => console.log("✅ Database connected successfully!"))
-  .catch((err) => console.error("❌ Database connection error:", err));
+  .catch((err:any) => console.error("❌ Database connection error:", err));
 
 // --- SIGNUP API ---
 app.post("/signup", async (req: Request, res: Response) => {
@@ -75,7 +74,7 @@ app.post("/signup", async (req: Request, res: Response) => {
 });
 
 //---For metadata---
-app.get("/metadata",async(req,res)=>{
+app.get("/metadata", async (req: Request, res: Response) => {
   const id=req.query.id;
 
   const query1=`SELECT username,email,id FROM users WHERE id=$1`;
@@ -91,8 +90,20 @@ app.get("/metadata",async(req,res)=>{
   })
 })
 
+
+//---For Better metadata----
+app.get("/better-metadata", async (req: Request, res: Response) => {
+  const id = req.query.id;
+
+  const query = `SELECT users.id,users.username,users.email,addresses.city,addresses.street,addresses.country,addresses.pincode FROM users JOIN addresses ON users.id=addresses.user_id WHERE users.id=$1`;
+  const response = await pgClient.query(query, [id]);
+  res.json({
+    success: true,
+    data: response.rows,
+  });
+});
 // --- TEST ROUTE ---
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("🚀 Server is running!");
 });
 
