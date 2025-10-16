@@ -1,0 +1,2 @@
+-- AddForeignKey
+ALTER TABLE "Todo" ADD CONSTRAINT "Todo_usrerId_fkey" FOREIGN KEY ("usrerId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
