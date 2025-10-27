@@ -3,7 +3,9 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div>
-      Hello This is next js home page 
+      
+      <button>Sign Up</button>
+      <button>Sign In</button>
     </div>
   );
 }
