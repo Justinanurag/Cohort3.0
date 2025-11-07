@@ -1,0 +1,18 @@
+Hydration (Next.js)
+
+Server pe Next.js tumhare page ka HTML banata hai.
+Phir wo HTML browser me aa jata hai.
+
+Lekin HTML sirf dikhta hai…
+usme React ka brain nahi hota.
+
+Hydration =
+React apna brain browser me attach karta hai
+taaki button click, state change, form, events… sab kaam kare.
+
+simple analogy (class 10)
+
+Server → ek robot ka body bana ke bhejta hai
+Browser → React us body me brain daalta hai
+
+brain daalne ka naam = hydration 
