@@ -16,6 +16,7 @@ export function GET(req: NextRequest) {
     return NextResponse.json({
       userId: decoded.userId,
       message: "Valid token",
+      name:"Anurag"
     });
   } catch (err) {
     return NextResponse.json({ error: "Invalid Token" }, { status: 401 });
