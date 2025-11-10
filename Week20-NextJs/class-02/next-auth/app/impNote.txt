@@ -1,0 +1,3 @@
+useSession() = browser/client side check karta hai
+
+getServerSession() = server side / backend pe check karta hai
