@@ -137,13 +137,13 @@ export const shareLink = async (req: Request, res: Response) => {
 //Get shareLink
 export const getShareLink = async (req: Request, res: Response) => {
   try {
-    const hash  = req.params.getShareLink; 
-   if(!hash){
-    return res.json({
-      sussess:false,
-      message:"Hash are required!!!!!"
-    })
-   }
+    const hash = req.params.hash; 
+    if(!hash){
+      return res.status(400).json({
+        success: false,
+        message: "Hash is required"
+      });
+    }
     const link = await Link.findOne({ hash });
 
     if (!link) {

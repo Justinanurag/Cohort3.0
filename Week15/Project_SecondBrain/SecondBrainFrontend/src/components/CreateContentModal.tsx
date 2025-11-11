@@ -81,55 +81,91 @@ export function CreateContentModal({ open, onClose }: CreateContentModalProps) {
 
   return (
     <div
-      className="w-screen h-screen fixed top-0 left-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50"
+      className="w-screen h-screen fixed top-0 left-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in p-4"
       onClick={onClose}
     >
       <div
-        className="bg-white p-6 rounded-2xl shadow-xl w-[400px] relative border border-gray-200"
+        className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md relative border border-gray-200 animate-slide-in"
         onClick={handleModalClick}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 text-gray-500 hover:text-gray-700 transition"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-lg"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Modal content */}
-        <form className="mt-2 flex flex-col gap-5" onSubmit={handleSubmit}>
-          <h2 className="text-xl font-semibold text-center text-gray-800">
-            Add New Content
-          </h2>
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Add New Content
+            </h2>
+            <p className="text-sm text-gray-600">
+              Save your favorite YouTube videos or Twitter posts
+            </p>
+          </div>
 
-          <Input
-            placeholder="Paste content link"
-            value={link}
-            onChange={(e) => setLink(e.target.value)}
-          />
-          <Input
-            placeholder="Enter title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          />
-
-          {/* Content type selection */}
-          <div className="flex gap-3">
-            <Button
-              text="Youtube"
-              variant={type === ContentType.Youtube ? "primary" : "secondary"}
-              onClick={() => setType(ContentType.Youtube)}
-              type="button"
-            />
-            <Button
-              text="Twitter"
-              variant={type === ContentType.Twitter ? "primary" : "secondary"}
-              onClick={() => setType(ContentType.Twitter)}
-              type="button"
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Content Link
+            </label>
+            <Input
+              placeholder="Paste YouTube or Twitter link here"
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
             />
           </div>
 
-          <Button variant="primary" text="Submit" type="submit" />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Title
+            </label>
+            <Input
+              placeholder="Give it a memorable title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+
+          {/* Content type selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Content Type
+            </label>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setType(ContentType.Youtube)}
+                className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                  type === ContentType.Youtube
+                    ? "bg-gradient-to-r from-red-600 to-red-700 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                YouTube
+              </button>
+              <button
+                type="button"
+                onClick={() => setType(ContentType.Twitter)}
+                className={`flex-1 py-3 px-4 rounded-xl font-medium transition-all duration-200 ${
+                  type === ContentType.Twitter
+                    ? "bg-gradient-to-r from-blue-400 to-blue-500 text-white shadow-lg"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Twitter
+              </button>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-3 rounded-xl font-semibold hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            Add Content
+          </button>
         </form>
       </div>
     </div>
@@ -150,7 +186,7 @@ function Input({
       type="text"
       value={value}
       placeholder={placeholder}
-      className="px-4 py-2 border border-gray-300 rounded-lg w-full focus:ring-2 focus:ring-blue-500 focus:outline-none transition"
+      className="px-4 py-3 border border-gray-300 rounded-xl w-full focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition-all bg-gray-50 focus:bg-white"
       onChange={onChange}
     />
   );

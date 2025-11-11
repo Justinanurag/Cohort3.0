@@ -16,27 +16,27 @@ export function useContent() {
       setContent(response.data.content);
     } catch (error: any) {
       console.error("Error fetching content:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: error.response?.data?.message || "Failed to fetch content",
-      });
+      // Only show error if it's not a 401 (unauthorized) - those are handled by Dashboard
+      if (error.response?.status !== 401) {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: error.response?.data?.message || "Failed to fetch content",
+          timer: 3000,
+          showConfirmButton: false,
+        });
+      }
     }
   }
 
   useEffect(() => {
-    // Optional: show a loading alert while fetching first time
-    Swal.fire({
-      title: "Loading content...",
-      allowOutsideClick: false,
-      didOpen: () => Swal.showLoading(),
-    });
+    // Initial fetch
+    refresh();
 
-    refresh().finally(() => Swal.close());
-
+    // Refresh content every 30 seconds (reduced from 10s to avoid too many requests)
     const interval = setInterval(() => {
       refresh();
-    }, 10 * 1000);
+    }, 30 * 1000);
 
     return () => clearInterval(interval);
   }, [BASE_URL]);

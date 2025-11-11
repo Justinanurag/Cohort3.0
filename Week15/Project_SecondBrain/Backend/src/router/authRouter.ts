@@ -10,7 +10,7 @@ authRouter.post('/login',login);
 authRouter.post('/content',userMiddleware,createContent);
 authRouter.get('/content',userMiddleware,getContent);
 authRouter.delete('/content',userMiddleware,delContent);
-authRouter.post('/ShareLink',userMiddleware,shareLink)
-authRouter.get('/:getShareLink',getShareLink)//Should be Public  
+authRouter.post('/shareLink',userMiddleware,shareLink)
+authRouter.get('/shareLink/:hash',getShareLink)//Should be Public  
 
 export default authRouter;
