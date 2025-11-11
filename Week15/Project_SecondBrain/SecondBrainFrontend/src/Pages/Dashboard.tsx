@@ -242,6 +242,7 @@ const Dashboard = () => {
               <span>Share Collection</span>
             </button>
           </div>
+        </div>
 
         {/* Content Display */}
         {contents.length === 0 ? (
