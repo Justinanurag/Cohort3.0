@@ -1,6 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { middleware } from "../Middleware/middleware";
+import { UserSchema, SigninSchema, createRoomSchema } from "@repo/common/types";
 dotenv.config();
 
 const port = process.env.PORT || 3000;
@@ -17,18 +19,28 @@ app.post("/login", (req, res) => {
   try {
     const { username, password } = req.body;
 
-    const token = jwt.sign({ username }, process.env.JWT_SECRET as string, {
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Username and password are required",
+      });
+    }
+
+    // Generate token
+    const token = jwt.sign({ username }, process.env.JWT_SECRET!, {
       expiresIn: "1h",
     });
+
     return res.status(200).json({
       success: true,
-      message: "Login successfully",
+      message: "Login successful",
       token,
     });
   } catch (error) {
-    res.status(500).json({
+    console.error("Login Error:", error);
+    return res.status(500).json({
       success: false,
-      error: "Internal Server Error",
+      message: "Internal Server Error",
     });
   }
 });
@@ -36,13 +48,17 @@ app.post("/login", (req, res) => {
 //register
 app.post("/register", (req, res) => {
   try {
+    const data = createRoomSchema.parse(req.body);
+    if (!data) {
+      return res.status(400).json({ error: "Invalid data" });
+    }
     const { username, password, email } = req.body;
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 //room
-app.post("/room", (req, res) => {
+app.post("/room", middleware, (req, res) => {
   try {
   } catch (error) {
     res.status(500).json({ error: "Internal Server Error" });
