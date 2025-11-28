@@ -1,12 +1,14 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { middleware } from "../Middleware/middleware";
-import { UserSchema, SigninSchema, createRoomSchema } from "@repo/common/types";
-dotenv.config();
+import { UserSchema, SigninSchema, createRoomSchema } from "@repo/common";
+import { prisma } from "@repo/db";
 
 const port = process.env.PORT || 3000;
 const app = express();
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.json({
@@ -15,7 +17,7 @@ app.get("/", (req, res) => {
 });
 
 //login
-app.post("/login", (req, res) => {
+app.post("/login", async (req, res) => {
   try {
     const { username, password } = req.body;
 
@@ -23,6 +25,26 @@ app.post("/login", (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Username and password are required",
+      });
+    }
+    // Check user in database
+    const user = await prisma.user.findUnique({
+      where: { email: username },
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username or password",
+      });
+    }
+
+    //compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid username or password",
       });
     }
 
@@ -46,17 +68,52 @@ app.post("/login", (req, res) => {
 });
 
 //register
-app.post("/register", (req, res) => {
+app.post("/register", async (req, res) => {
   try {
-    const data = createRoomSchema.parse(req.body);
-    if (!data) {
-      return res.status(400).json({ error: "Invalid data" });
+    const { name, password, email } = req.body;
+
+    if (!name || !password || !email) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, password and email are required",
+      });
     }
-    const { username, password, email } = req.body;
+
+    // Check if user already exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "User already exists",
+      });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = await prisma.user.create({
+      data: { 
+        name,
+        email,
+        password: hashedPassword 
+      },
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      userId: newUser.id,
+    });
   } catch (error) {
+    console.error(error)
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 //room
 app.post("/room", middleware, (req, res) => {
   try {
