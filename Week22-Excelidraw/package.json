@@ -1,5 +1,5 @@
 {
-  "name": "drawapp",
+  "name": "Week22-Excelidraw",
   "private": true,
   "scripts": {
     "build": "turbo run build",
