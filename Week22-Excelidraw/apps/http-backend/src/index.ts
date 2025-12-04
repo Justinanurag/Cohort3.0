@@ -3,10 +3,14 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 // import { PrismaClient } from "@prisma/client";
 import { authMiddleware } from "./middleware";
+import {JWT_SECRET} from "@repo/backend-common/config";
+import {CreateUserSchema,SigninSchema,createRoomSchema} from "@repo/common/src/types";
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+// const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
+
+console.log(JWT_SECRET)
 
 // Home route
 app.get("/", (req: Request, res: Response) => {
@@ -15,6 +19,12 @@ app.get("/", (req: Request, res: Response) => {
 
 //Sign up route
 app.post("/signup", async (req: Request, res: Response) => {
+  const data=CreateUserSchema.safeParse(req.body);
+  if(!data.success){
+    return res.json({
+      message:"Incorrect inputs!!"
+    })
+  }
   const { email, password, name } = req.body;
   try {
     if (!email || !password || !name) {
@@ -57,6 +67,12 @@ app.post("/signup", async (req: Request, res: Response) => {
 //Sign in route
 
 app.post("signin", async (req: Request, res: Response) => {
+  const data=SigninSchema.safeParse(req.body);
+  if(!data.success){
+    return res.json({
+      message:"Incorrect inputs!!"
+    })
+  }
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -104,7 +120,14 @@ app.post("signin", async (req: Request, res: Response) => {
 });
 
 //room route
-app.post("/room", authMiddleware, async (req: Request, res: Response) => {});
+app.post("/room", authMiddleware, async (req: Request, res: Response) => {
+  const data=createRoomSchema.safeParse(req.body);
+  if(!data.success){
+    return res.json({
+      message:"Incorrect inputs!!"
+    })
+  }
+});
 
 // Start server
 app.listen(PORT, () => {
