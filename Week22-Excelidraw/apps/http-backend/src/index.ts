@@ -1,16 +1,21 @@
 import express, { Request, Response, Express } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-// import { PrismaClient } from "@prisma/client";
 import { authMiddleware } from "./middleware";
 import {JWT_SECRET} from "@repo/backend-common/config";
-import {CreateUserSchema,SigninSchema,createRoomSchema} from "@repo/common/src/types";
+import {CreateUserSchema,SigninSchema,createRoomSchema} from "@repo/common/types";
+import { PrismaClient } from "@prisma/client";
 
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
-// const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key";
 
-console.log(JWT_SECRET)
+process.env.PRISMA_CLIENT_ENGINE_TYPE = "library";
+
+app.use(express.json());
+
+const prisma = new PrismaClient({
+  __internal: { engine: { type: "library" } },
+} as any);
 
 // Home route
 app.get("/", (req: Request, res: Response) => {
@@ -19,36 +24,34 @@ app.get("/", (req: Request, res: Response) => {
 
 //Sign up route
 app.post("/signup", async (req: Request, res: Response) => {
-  const data=CreateUserSchema.safeParse(req.body);
-  if(!data.success){
-    return res.json({
-      message:"Incorrect inputs!!"
-    })
+  const parsed = CreateUserSchema.safeParse(req.body);
+  
+  if (!parsed.success) {
+    return res.status(400).json({
+      success: false,
+      message: "Incorrect inputs!"
+    });
   }
-  const { email, password, name } = req.body;
-  try {
-    if (!email || !password || !name) {
-      return res.status(400).json({
-        success: false,
-        message: "Email,password and name are required for sign up!",
-      });
-    }
 
+  const { username, password, name } = parsed.data;
+
+  try {
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const user = await prisma.user.create({
-      data: {
-        name,
-        email,
-        password: hashedPassword,
-      },
+      data: { name, email, password: hashedPassword },
     });
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, {
-      expiresIn: "7d",
-    });
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
     return res.status(201).json({
       message: "User created successfully",
@@ -64,9 +67,10 @@ app.post("/signup", async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Server error" });
   }
 });
+
 //Sign in route
 
-app.post("signin", async (req: Request, res: Response) => {
+app.post("/signin", async (req: Request, res: Response) => {
   const data=SigninSchema.safeParse(req.body);
   if(!data.success){
     return res.json({

@@ -1,3 +1,5 @@
-import { PrismaClient } from "../src/generated/prisma/client";
+// Use Prisma client directly from the generated package in node_modules.
+import { PrismaClient } from "@prisma/client";
 
-export const prisma = new PrismaClient();
+export const Prisma = new PrismaClient();
+export { PrismaClient };
