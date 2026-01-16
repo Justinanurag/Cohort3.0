@@ -1,3 +1,9 @@
+import dotenv from "dotenv";
+import path from "path";
+
+// Load environment variables from .env file in the http-backend directory
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
+
 import express, { Request, Response, Express } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -7,7 +13,7 @@ import {CreateUserSchema,SigninSchema,createRoomSchema} from "@repo/common/types
 import { PrismaClient } from "@prisma/client";
 
 const app: Express = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 54;
 
 process.env.PRISMA_CLIENT_ENGINE_TYPE = "library";
 
@@ -24,52 +30,78 @@ app.get("/", (req: Request, res: Response) => {
 
 //Sign up route
 app.post("/signup", async (req: Request, res: Response) => {
+  // 1. Validate input
   const parsed = CreateUserSchema.safeParse(req.body);
-  
+
   if (!parsed.success) {
     return res.status(400).json({
       success: false,
-      message: "Incorrect inputs!"
+      message: "Invalid input data",
+      errors: parsed.error.flatten().fieldErrors,
     });
   }
 
-  const { username, password, name } = parsed.data;
+  const validatedData = parsed.data;
+  const { name, email, password } = validatedData;
+  // const { name, email, password } = req.body;
 
   try {
-    const existingUser = await prisma.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await prisma.user.create({
-      data: { name, email, password: hashedPassword },
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
     });
 
+    if (existingUser) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
+    // 3. Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 4. Create user
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        password: hashedPassword,
+      },
+    });
+
+    // 5. Generate JWT
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      {
+        userId: user.id,
+        email: user.email,
+      },
       JWT_SECRET,
       { expiresIn: "7d" }
     );
 
+    // 6. Send response
     return res.status(201).json({
+      success: true,
       message: "User created successfully",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
+      data: {
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+        },
+        token,
       },
-      token,
     });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server error" });
+    console.error("Signup Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
   }
 });
 
 //Sign in route
-
 app.post("/signin", async (req: Request, res: Response) => {
   const data=SigninSchema.safeParse(req.body);
   if(!data.success){
