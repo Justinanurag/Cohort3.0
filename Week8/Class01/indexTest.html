@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+
+    <button onclick="counter()">
+        <h1>count</h1>
+        <p id="number">0</p>
+    </button>
+</body>
+<script>
+    function counter() {
+        const counterValue = document.getElementById("number").innerHTML;
+        console.log(counterValue);//0
+        newCounter = parseInt(counterValue) + 1;
+        console.log(newCounter);
+        document.getElementById("number").innerHTML = newCounter;
+    }
+</script>
+
+</html>
