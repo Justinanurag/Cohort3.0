@@ -1,9 +1,2 @@
-import { PrismaPg } from "@prisma/adapter-pg";
-import { pool } from "./config/dbConnection";
-import { PrismaClient } from "./generated/prisma/client";
-
-const adapter = new PrismaPg(pool);
-
-export const prisma = new PrismaClient({
-  adapter,
-});
+// Export Prisma client and connection utilities
+export { prisma, pool, connectDatabase } from "./config/dbConnection.js";

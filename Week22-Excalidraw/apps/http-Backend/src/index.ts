@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { middleware } from "../Middleware/middleware";
 import { UserSchema, SigninSchema, createRoomSchema } from "@repo/common";
-import { prisma } from "@repo/db";
+import { prisma, connectDatabase } from "@repo/db";
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -109,8 +109,11 @@ app.post("/register", async (req, res) => {
       userId: newUser.id,
     });
   } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Register Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+    });
   }
 });
 
@@ -122,6 +125,20 @@ app.post("/room", middleware, (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`HTTP Backend is running on port ${port}`);
-});
+// Initialize database connection and start server
+async function startServer() {
+  try {
+    // Connect to database first
+    await connectDatabase();
+    
+    // Start server after database connection is established
+    app.listen(port, () => {
+      console.log(`🚀 HTTP Backend is running on port ${port}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
