@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="taskInput" placeholder="Enter Task">
+    <button onclick="addTodo()">Add Task</button>
+    <div id="taskList"></div>
+    <script>
+        function addTodo(){
+            const value=document.getElementById("taskInput").value;// INPUT BOX K ANDER KI VALUES LIYE  
+            console.log(value);
+            const taskDiv=document.createElement("div");
+            console.log(taskDiv); // DIV ELEMENT BANAYA MTLB USKO EK DIV TAG DE DIYA
+            taskDiv.innerText=value;// JO VALUE INPUT BOX MEIN LI THI WO AB DIV MEIN AA GAYI
+            taskDiv.innerHTML+=' <button onclick="deleteTodo()">Delete</button>';// DIV MEIN DELETE BUTTON ADD KAR DIYA
+            document.getElementById("taskList").appendChild(taskDiv);// JO DIV BANAYA USKO TASKLIST MEIN DAAL DIYA
+            document.getElementById("taskInput").value="";// RESET KEDIYA  INPUT BOX KO KHALI KAR DIYA
+        }
+        function deleteTodo(){
+            const taskList=document.getElementById("taskList");// TASKLIST KO SELECT KARDIYA
+            taskList.removeChild(taskList.lastChild);// TASKLIST MEIN SE LAST CHILD KO REMOVE KAR DIYA
+        }
+
+    </script>
+    
+</body>
+</html>

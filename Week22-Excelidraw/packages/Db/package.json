@@ -1,0 +1,49 @@
+{
+  "name": "@repo/db",
+  "version": "1.0.0",
+  "description": "",
+<<<<<<< HEAD:Week22-Excalidraw/packages/Db/package.json
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+=======
+  "main": "dist/index.js",
+  "exports":{
+    "./client":"./dist/index.js"
+>>>>>>> 98fd5ef79e45b4ba9488cb23fcfafccdc5829d55:Week22-Excelidraw/packages/Db/package.json
+  },
+  "types": "./dist/index.d.ts",
+  "scripts": {
+<<<<<<< HEAD:Week22-Excalidraw/packages/Db/package.json
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -b",
+    "generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/pg": "^8.11.10",
+    "tsx": "^4.20.6"
+=======
+    "build": "tsc -b",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*"
+>>>>>>> 98fd5ef79e45b4ba9488cb23fcfafccdc5829d55:Week22-Excelidraw/packages/Db/package.json
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "prisma": "^5.20.0",
+    "@prisma/client": "^5.20.0"
+  }
+}

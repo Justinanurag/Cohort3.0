@@ -12,36 +12,47 @@
       })
       render();
     }
-    function deleteLastTodo(){
-      todos.splice(todos.length-1,1);//remove last to do
+    function deleteLastTodo() {
+      todos.splice(todos.length - 1, 1);//remove last toDo from the array
       //todos.pop();
       render();
     }
-
-   
-//  Components
-    function createTodoComponent(todo){
-      const div=document.createElement("div");;
-      const h1 =document.createElement("h1");
-      const button =document.createElement("button");
-      button.innerHTML="delete";
-      //Delete button functionality
-      button.onclick= function deleteTodo() {
-    todos.pop()
+    function deleteTodo(index) {
+      todos.splice(index - 1, 1);
       render();
     };
-      h1.innerHTML=todo.title;
+    function deleteTodoAtIndex(index) {
+      todos.splice(index - 1, 1);
+      render();
+    };
+
+
+
+    //  Components: A function that creates a todo component
+    function createTodoComponent(todo, index) {
+      const div = document.createElement("div");//Container div
+      const h1 = document.createElement("h1");// Title h1
+      const button = document.createElement("button");// Delete button
+      button.innerHTML = "delete";
+      button.setAttribute("onclick", "deleteTodoAtIndex(" + (todos.indexOf(todo) + 1) + ")");
+      //   //Delete button functionality
+      button.onclick = function deleteTodo() {
+        todos.pop()
+        render();
+      };
+      h1.innerHTML = todo.title;
       div.append(h1);
       div.append(button);
       return div;
     }
+
     function render() {
-      document.querySelector("#todos").innerHTML="";//First Clear the div
-      for(let i=0; i<todos.length; i++){
-        const element=createTodoComponent(todos[i]);
+      document.querySelector("#todos").innerHTML = "";//First Clear the div
+      for (let i = 0; i < todos.length; i++) {
+        const element = createTodoComponent(todos[i], i);
         document.querySelector("#todos").appendChild(element);
       }
-      
+
     }
   </script>
 </body>
